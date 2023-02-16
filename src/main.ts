@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 14:46:59
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-14 14:21:09
+ * @LastEditTime: 2023-02-15 17:28:17
  */
 import { createApp } from "vue";
 import { createPinia } from "pinia";
@@ -18,7 +18,6 @@ import {
   Checkbox,
   CheckboxGroup,
 } from "vant";
-// import "../src/plugin/api/index.js";
 import plugins from "./plugin/index.js";
 import "vant/lib/index.css";
 import "amfe-flexible";

@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 16:29:39
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-10 17:12:06
+ * @LastEditTime: 2023-02-16 17:05:17
 -->
 <template>
   <div>
@@ -101,11 +101,15 @@
 <script setup lang="ts">
 import { reactive, ref, computed, defineProps, defineEmits, inject } from "vue";
 import { loginStore } from "@/stores/counter";
+import { globalStore } from "@/stores/global";
 import { storeToRefs } from "pinia";
 
 const api: any = inject("$api"); // 通过inject获取挂载在全局的globalFunc方法
 const store = loginStore();
+const globalStores = globalStore();
 const { successVerify } = storeToRefs(store);
+// const { successVerify } = storeToRefs(globalStores);
+
 const propsOther = defineProps({
   type: {
     type: String,
@@ -146,6 +150,9 @@ function getCode() {
   } else {
     store.changeState("isShowModel", true);
   }
+  // globalStores.openDialog({
+  //   content: () => import("@/components/canvas/textClickCode.vue")
+  // });
 }
 
 function getCodeCallback() {

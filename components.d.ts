@@ -7,10 +7,12 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Dialog: typeof import('./src/components/global/dialog/index.vue')['default']
     Header: typeof import('./src/components/headerCom/header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SlideVerify: typeof import('./src/components/slideVerify/slideVerify.vue')['default']
     TextClickCode: typeof import('./src/components/canvas/textClickCode.vue')['default']
+    Vialog: typeof import('./src/components/global/vialog/index.vue')['default']
   }
 }
