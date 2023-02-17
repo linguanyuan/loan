@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 14:46:59
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-16 17:28:27
+ * @LastEditTime: 2023-02-16 17:55:42
 -->
 <template>
   <div class="w100 relative">
@@ -62,11 +62,11 @@
 </template>
 
 <script setup lang='ts'>
-import loginForm from "../views/loginFrom/loginForm.vue";
+import loginForm from "./components/loginForm.vue";
 import { ref, inject } from "vue";
 import slideVerify from "@/components/slideVerify/slideVerify.vue";
 import textClickCode from "@/components/canvas/textClickCode.vue";
-const getImageUrl: any = new URL("../assets/image/bg.png", import.meta.url);
+const getImageUrl: any = new URL("../../assets/image/bg.png", import.meta.url);
 const verify = ref(); //verify 要和Son组件上的class名相同
 const getLogin = ref();
 const api: any = inject("$api"); // 通过inject获取挂载在全局的globalFunc方法
