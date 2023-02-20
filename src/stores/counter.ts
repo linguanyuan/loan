@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 14:46:59
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-01-19 17:29:40
+ * @LastEditTime: 2023-02-20 16:27:51
  */
 import { defineStore } from 'pinia'
 
@@ -13,8 +13,7 @@ export const loginStore = defineStore('loginVerify', {
     return {
       // 所有这些属性都将自动推断其类型
       name: 'loginVerify',
-      isShowModel: false,
-      successVerify: false,
+      isShowModel: false
     }
   },
   // 计算属性

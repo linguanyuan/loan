@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 14:46:59
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-15 17:28:17
+ * @LastEditTime: 2023-02-17 18:37:04
  */
 import { createApp } from "vue";
 import { createPinia } from "pinia";
@@ -17,6 +17,8 @@ import {
   Image as VanImage,
   Checkbox,
   CheckboxGroup,
+  Popup,
+  Dialog 
 } from "vant";
 import plugins from "./plugin/index.js";
 import "vant/lib/index.css";
@@ -39,7 +41,9 @@ app
   .use(NavBar)
   .use(VanImage)
   .use(Checkbox)
-  .use(CheckboxGroup);
+  .use(CheckboxGroup)
+  .use(Popup)
+  .use(Dialog);
 app.use(createPinia());
 app.use(router);
 

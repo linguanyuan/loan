@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 16:29:39
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-16 17:05:17
+ * @LastEditTime: 2023-02-20 18:43:43
 -->
 <template>
   <div>
@@ -107,8 +107,7 @@ import { storeToRefs } from "pinia";
 const api: any = inject("$api"); // 通过inject获取挂载在全局的globalFunc方法
 const store = loginStore();
 const globalStores = globalStore();
-const { successVerify } = storeToRefs(store);
-// const { successVerify } = storeToRefs(globalStores);
+const { isShowModel } = storeToRefs(store);
 
 const propsOther = defineProps({
   type: {
@@ -144,11 +143,12 @@ const count = ref<any>("");
 const timer: any = ref(null);
 
 function getCode() {
-  emit('getData')
-  if (successVerify.value) {
+  console.log("isShowModel.value",isShowModel.value)
+  if (isShowModel.value) {
     getCodeCallback()
   } else {
     store.changeState("isShowModel", true);
+    // emit('getData', true)
   }
   // globalStores.openDialog({
   //   content: () => import("@/components/canvas/textClickCode.vue")

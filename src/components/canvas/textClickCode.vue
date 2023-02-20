@@ -1,66 +1,73 @@
 <template>
-  <div id="clickCode" class="flex justify-center align-center" v-cloak>
-    <div class="verify-container" :style="{ width: `${width}px` }">
-      <div class="refresh" @click="reset">
-        <svg
-          t="1637315258145"
-          class="icon"
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          p-id="2420"
-          width="20"
-          height="20"
-        >
-          <path
-            d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z"
-            p-id="2421"
-            fill="#8a8a8a"
-          ></path>
-        </svg>
+  <van-dialog
+    v-model:show="show"
+    :show-cancel-button="false"
+    :show-confirm-button="false"
+  >
+    <div id="clickCode" class="flex justify-center align-center" v-cloak>
+      <div class="verify-container" :style="{ width: `${width}px` }">
+        <div class="refresh" @click="reset">
+          <svg
+            t="1637315258145"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="2420"
+            width="20"
+            height="20"
+          >
+            <path
+              d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z"
+              p-id="2421"
+              fill="#8a8a8a"
+            ></path>
+          </svg>
+        </div>
+        <div class="pic">
+          <canvas
+            class="canvas"
+            ref="canvas"
+            :width="width"
+            :height="height"
+            @click="createPointer"
+          ></canvas>
+          <span
+            class="pointer"
+            v-for="(item, index) in pointer"
+            :key="index"
+            :style="{ left: `${item.x}px`, top: `${item.y}px` }"
+          >
+            <i>{{ index + 1 }}</i>
+          </span>
+        </div>
+        <div :class="['toolbar', state]">
+          <p v-if="state === 'fail'">验证失败</p>
+          <p v-else-if="state === 'success'">验证通过</p>
+          <p v-else>
+            请顺序点击【<span v-for="(item, index) in tips" :key="index">{{
+              item.character
+            }}</span
+            >】
+          </p>
+        </div>
       </div>
-      <div class="pic">
-        <canvas
-          class="canvas"
-          ref="canvas"
-          :width="width"
-          :height="height"
-          @click="createPointer"
-        ></canvas>
-        <span
-          class="pointer"
-          v-for="(item, index) in pointer"
-          :key="index"
-          :style="{ left: `${item.x}px`, top: `${item.y}px` }"
-        >
-          <i>{{ index + 1 }}</i>
-        </span>
-      </div>
-      <div :class="['toolbar', state]">
-        <p v-if="state === 'fail'">验证失败</p>
-        <p v-else-if="state === 'success'">验证通过</p>
-        <p v-else>
-          请顺序点击【<span v-for="(item, index) in tips" :key="index">{{
-            item.character
-          }}</span
-          >】
-        </p>
-      </div>
+      <br />
     </div>
-    <br />
-  </div>
+  </van-dialog>
 </template>
 <script setup lang="ts">
 import {
   reactive,
   ref,
-  computed,
   defineProps,
-  defineEmits,
-  inject,
   onMounted,
   onBeforeUnmount,
+  nextTick,
+  onUpdated
 } from "vue";
+import { loginStore } from "@/stores/counter";
+import { storeToRefs } from "pinia";
 
 const App = defineProps({
   width: {
@@ -101,24 +108,31 @@ const App = defineProps({
     ],
   },
 });
+const store = loginStore();
 
-const canvas = ref();
-const bgImg = ref();
-const ctx = ref();
+const canvas = ref<any>(null);
+const bgImg = ref<any>(null);
+const ctx = ref<any>(null);
 let fontArr: any[] = reactive([]);
-let tips = ref([]as any[]);
+let tips = ref([] as any[]);
 let pointer: any[] = reactive([]);
 let state: any = ref("");
 const timeIns = ref();
+const { isShowModel } = storeToRefs(store);
+const show = ref<any>(isShowModel);
 
 onMounted(() => {
+});
+
+onUpdated(() => {
   init();
 });
 
 function init() {
-  console.log("init", canvas.value);
-  ctx.value = canvas.value.getContext("2d");
-  getImg();
+  nextTick(() => {
+    ctx.value = canvas.value.getContext("2d");
+    getImg();
+  });
 }
 
 function getImg() {
@@ -141,7 +155,6 @@ function draw() {
 
   for (let i = 0; i < App.fontNum; i++) {
     const character = getRandomCharacter();
-    console.log(character);
     const fontSize = randomNum(20, (App.height * 1) / 4);
     const fontWeight = Math.random() > 0.5 ? "bold" : "normal";
     const fontStyle = Math.random() > 0.5 ? "italic" : "normal";
@@ -161,15 +174,12 @@ function draw() {
       y,
     });
   }
-  console.log("fontArr", fontArr);
 
   for (let i = 0; i < App.checkNum; i++) {
     const randomIndex = Math.floor(Math.random() * fontArr.length);
     const character = fontArr.splice([randomIndex], 1)[0];
     tips.value.push(character);
-    // console.log(character, this.fontArr)
   }
-  console.log("tips", tips);
 }
 
 // 获取随机字符
@@ -202,7 +212,6 @@ function randomColor(min: any, max: any) {
 }
 
 function createPointer(e: { offsetX: number; offsetY: number }) {
-  // console.log(e)
   const canvasRect = canvas.value.getBoundingClientRect();
   const x = e.offsetX - 15;
   const y = e.offsetY - 15;
@@ -215,6 +224,7 @@ function createPointer(e: { offsetX: number; offsetY: number }) {
     const isPass = verify();
     if (isPass) {
       state.value = "success";
+      store.changeState("isShowModel", false);
     } else {
       state.value = "fail";
       // 如果失败则1000毫秒后重置
@@ -227,7 +237,6 @@ function createPointer(e: { offsetX: number; offsetY: number }) {
 
 // 判断精度
 function verify() {
-  console.log("验证");
   const result = pointer.every((item, index) => {
     const _left = item.x > tips.value[index].x - App.accuracy;
     const _right = item.x < tips.value[index].x + App.accuracy;
@@ -235,7 +244,6 @@ function verify() {
     const _bottom = item.y < tips.value[index].y + App.accuracy;
     return _left && _right && _top && _bottom;
   });
-  console.log(result);
   return result;
 }
 
@@ -252,6 +260,10 @@ function reset() {
 // beforeDestroy
 onBeforeUnmount(() => {
   clearTimeout(timeIns.value);
+});
+
+defineExpose({
+  init,
 });
 </script>
 <style lang="less" scoped>
