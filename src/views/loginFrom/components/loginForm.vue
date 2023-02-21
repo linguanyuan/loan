@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 16:29:39
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-20 18:43:43
+ * @LastEditTime: 2023-02-21 18:50:58
 -->
 <template>
   <div>
@@ -99,7 +99,16 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, defineProps, defineEmits, inject } from "vue";
+import {
+  reactive,
+  ref,
+  computed,
+  defineProps,
+  defineEmits,
+  inject,
+  watch,
+} from "vue";
+import { $ref } from "vue/macros";
 import { loginStore } from "@/stores/counter";
 import { globalStore } from "@/stores/global";
 import { storeToRefs } from "pinia";
@@ -115,12 +124,12 @@ const propsOther = defineProps({
     default: "ad",
   },
 });
-const emit = defineEmits(['getData'])
+const emit = defineEmits(["getData"]);
 
-const loading = ref(false);
+const loading = $ref(false);
 const reg = /^1[3|4|5|7|8|9]\d{9}$/;
 // 同意协议
-const agree = ref(true);
+const agree = $ref(true);
 const adCheckBox: any = {
   check: new URL("@/assets/image/checkbox/checkbox.png", import.meta.url),
   noCheck: new URL("@/assets/image/checkbox/grayCheckBox.png", import.meta.url),
@@ -137,15 +146,26 @@ const form = reactive({
   phone: "",
   smsVerificationCode: "",
 });
-const codeText = ref("获取验证码");
-const countdown = ref<Boolean>(true); //验证码的状态，默认显示发送验证码
-const count = ref<any>("");
-const timer: any = ref(null);
+let codeText = $ref("获取验证码");
+let countdown = $ref<Boolean>(true);let count = $ref<any>("");
+let timer: any = $ref(null);
+
+watch(
+  () => isShowModel.value,
+  (newVal, oldVal) => {
+    if (isShowModel.value === false && codeText === "获取验证码") {
+      getCode();
+    }
+  },
+  {
+    immediate: true, // 立即执行
+    deep: true, // 深度监听
+  }
+);
 
 function getCode() {
-  console.log("isShowModel.value",isShowModel.value)
   if (isShowModel.value) {
-    getCodeCallback()
+    getCodeCallback();
   } else {
     store.changeState("isShowModel", true);
     // emit('getData', true)
@@ -157,17 +177,17 @@ function getCode() {
 
 function getCodeCallback() {
   let TIME_COUNT = 5;
-  if (!timer.value) {
-    count.value = TIME_COUNT;
-    countdown.value = false;
-    codeText.value = "重新获取";
-    timer.value = setInterval(() => {
-      if (count.value > 0 && count.value <= TIME_COUNT) {
-        count.value--;
+  if (!timer) {
+    count = TIME_COUNT;
+    countdown = false;
+    codeText = "重新获取";
+    timer = setInterval(() => {
+      if (count > 0 && count <= TIME_COUNT) {
+        count--;
       } else {
-        countdown.value = true;
-        clearInterval(timer.value);
-        timer.value = null;
+        countdown = true;
+        clearInterval(timer);
+        timer = null;
       }
     }, 1000);
   }
@@ -183,12 +203,12 @@ const validatorPhone = (val: any) => {
 };
 
 function sltEle() {
-  if (validatorPhone(form.phone) && codeText.value === "获取验证码") {
-    countdown.value = true;
+  if (validatorPhone(form.phone) && codeText === "获取验证码") {
+    countdown = true;
     return false;
   }
-  if (codeText.value === "重新获取" && !timer.value) {
-    countdown.value = true;
+  if (codeText === "重新获取" && !timer) {
+    countdown = true;
     return false;
   }
   return true;
@@ -196,13 +216,13 @@ function sltEle() {
 
 function onSubmit(values: any) {
   console.log("submit", values.phone);
-  api.userSms({phone:values.phone});
+  api.userSms({ phone: values.phone });
 }
 
 //关键点 把 子组件方法暴露给父组件
 defineExpose({
-  getCode
-})
+  getCode,
+});
 </script>
 <style lang="less" scoped>
 .main-text-color {

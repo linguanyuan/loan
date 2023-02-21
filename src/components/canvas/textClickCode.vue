@@ -35,7 +35,7 @@
           <span
             class="pointer"
             v-for="(item, index) in pointer"
-            :key="index"
+            :key="item.x+item.y"
             :style="{ left: `${item.x}px`, top: `${item.y}px` }"
           >
             <i>{{ index + 1 }}</i>
@@ -64,7 +64,8 @@ import {
   onMounted,
   onBeforeUnmount,
   nextTick,
-  onUpdated
+  onUpdated,
+  defineEmits,
 } from "vue";
 import { loginStore } from "@/stores/counter";
 import { storeToRefs } from "pinia";
@@ -121,8 +122,7 @@ const timeIns = ref();
 const { isShowModel } = storeToRefs(store);
 const show = ref<any>(isShowModel);
 
-onMounted(() => {
-});
+onMounted(() => {});
 
 onUpdated(() => {
   init();
@@ -212,12 +212,14 @@ function randomColor(min: any, max: any) {
 }
 
 function createPointer(e: { offsetX: number; offsetY: number }) {
-  const canvasRect = canvas.value.getBoundingClientRect();
+  // const canvasRect = canvas.value.getBoundingClientRect();
   const x = e.offsetX - 15;
   const y = e.offsetY - 15;
 
   if (pointer.length < tips.value.length) {
-    pointer.push({ x, y });
+    pointer = [...pointer, { x, y }]
+    // pointer.push({ x, y });
+    console.log("pointer", pointer);
     state.value = "active";
   }
   if (pointer.length === tips.value.length) {
@@ -225,6 +227,7 @@ function createPointer(e: { offsetX: number; offsetY: number }) {
     if (isPass) {
       state.value = "success";
       store.changeState("isShowModel", false);
+      reset();
     } else {
       state.value = "fail";
       // 如果失败则1000毫秒后重置
@@ -290,6 +293,7 @@ defineExpose({
   border-radius: 50%;
   padding: 15px;
   position: absolute;
+  z-index: 999;
 }
 .pointer i {
   color: #fff;

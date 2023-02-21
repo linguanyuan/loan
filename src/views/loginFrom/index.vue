@@ -72,11 +72,6 @@ const verify = ref(); //verify 要和Son组件上的class名相同
 const getLogin = ref();
 const api: any = inject("$api"); // 通过inject获取挂载在全局的globalFunc方法
 
-function logs(isShow: Boolean) {
-  show.value = isShow
-  console.log('clickCode.value', clickCode.value.showFun())
-}
-
 // const func1 = () => {
 //   api.userGetUser();
 // };

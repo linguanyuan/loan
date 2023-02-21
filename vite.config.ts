@@ -3,7 +3,7 @@
  * @Date: 2022-12-26 14:46:59
  * @Author: linguanyuan
  * @LastEditors: linguanyuan
- * @LastEditTime: 2023-02-13 18:51:09
+ * @LastEditTime: 2023-02-21 15:49:47
  */
 import { fileURLToPath, URL } from "node:url";
 
@@ -18,7 +18,9 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig({
   base: "./", //等同于  assetsPublicPath :'./'
   plugins: [
-    vue(),
+    vue({
+      reactivityTransform: true
+    }),
     styleImport({
       resolves: [VantResolve()],
     }),

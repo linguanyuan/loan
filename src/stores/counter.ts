@@ -13,7 +13,7 @@ export const loginStore = defineStore('loginVerify', {
     return {
       // 所有这些属性都将自动推断其类型
       name: 'loginVerify',
-      isShowModel: false
+      isShowModel: null
     }
   },
   // 计算属性
